@@ -69,7 +69,7 @@ func GetSlice[E any](v []E, b ...int) []E {
 	return v
 }
 
-func MakeSliceStr[E any](s []E, sep ...string) string {
+func MakeSliceStr[S ~[]E, E any](s S, sep ...string) string {
 	o := make([]string, len(s))
 	for i := range s {
 		switch reflect.TypeOf(s[i]).Kind() {

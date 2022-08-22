@@ -8,126 +8,57 @@ import (
 )
 
 func TestMakeIntSlice(t *testing.T) {
-	tcs := []Tc{
-		{
-			expectation: []int{},
-			input:       ``,
-		},
-		{
-			expectation: []int{},
-			input:       `[]`,
-		},
-		{
-			expectation: []int{1},
-			input:       `[1]`,
-		},
-		{
-			expectation: []int{1, 2, 3},
-			input:       `[1,2,3]`,
-		},
-		{
-			expectation: []int{1, 2, 3},
-			input:       `[1, 2, 3]`,
-		},
-	}
+	NewTestcases(t).
+		Add([]int{}, "").
+		Add([]int{}, "[]").
+		Add([]int{1}, "[1]").
+		Add([]int{1, 2, 3}, "[1,2,3]").
+		Add([]int{1, 2, 3}, "[ 1 , 2 , 3 ]").
+		Each(func(a *assert.Assertions, td TestData) {
+			actual := MakeIntSlice(td.Input.(string))
 
-	for _, tc := range tcs {
-		actual := MakeIntSlice(tc.input.(string))
-
-		assert.Equal(t, tc.expectation, actual)
-	}
+			a.Equal(td.Expectation, actual)
+		})
 }
 
 func TestMakeStringSlice(t *testing.T) {
-	tcs := []Tc{
-		{
-			expectation: []string{},
-			input:       ``,
-		},
-		{
-			expectation: []string{},
-			input:       `[]`,
-		},
-		{
-			expectation: []string{"1"},
-			input:       `["1"]`,
-		},
-		{
-			expectation: []string{"1", "2", "3"},
-			input:       `["1","2","3"]`,
-		},
-		{
-			expectation: []string{"1", "2", "3"},
-			input:       `["1", "2", "3"]`,
-		},
-	}
+	NewTestcases(t).
+		Add([]string{}, "").
+		Add([]string{}, "[]").
+		Add([]string{"1"}, `["1"]`).
+		Add([]string{"1", "2", "3"}, `["1","2","3"]`).
+		Add([]string{"1", "2", "3"}, `["1", "2", "3"]`).
+		Each(func(a *assert.Assertions, td TestData) {
+			actual := MakeStringSlice(td.Input.(string))
 
-	for _, tc := range tcs {
-		actual := MakeStringSlice(tc.input.(string))
-
-		assert.Equal(t, tc.expectation, actual)
-	}
+			assert.Equal(t, td.Expectation, actual)
+		})
 }
 
 func TestGetSlice(t *testing.T) {
-	tcs := []Tc{
-		{
-			expectation: []int{1, 2, 3, 4, 5, 6},
-			input:       []int(nil),
-		},
-		{
-			expectation: []int{1, 2, 3, 4, 5, 6},
-			input:       []int{},
-		},
-		{
-			expectation: []int{1, 2},
-			input:       []int{2},
-		},
-		{
-			expectation: []int{5, 6},
-			input:       []int{-2},
-		},
-		{
-			expectation: []int{3, 4, 5},
-			input:       []int{2, 5},
-		},
-	}
-	v := []int{1, 2, 3, 4, 5, 6}
+	NewTestcases(t).
+		Add([]int{1, 2, 3, 4, 5, 6}, []int(nil)).
+		Add([]int{1, 2, 3, 4, 5, 6}, []int{}).
+		Add([]int{1, 2}, []int{2}).
+		Add([]int{5, 6}, []int{-2}).
+		Add([]int{3, 4, 5}, []int{2, 5}).
+		Each(func(a *assert.Assertions, td TestData) {
+			v := []int{1, 2, 3, 4, 5, 6}
+			actual := GetSlice(v, td.Input.([]int)...)
 
-	for _, tc := range tcs {
-		actual := GetSlice(v, tc.input.([]int)...)
-
-		assert.Equal(t, tc.expectation, actual)
-	}
+			a.Equal(td.Expectation, actual)
+		})
 }
 
 func TestMakeSliceStr(t *testing.T) {
-	tcs := []Tc{
-		{
-			expectation: "[]",
-			input:       []string(nil),
-		},
-		{
-			expectation: "[]",
-			input:       []string{},
-		},
-		{
-			expectation: `["1"]`,
-			input:       []string{"1"},
-		},
-		{
-			expectation: `["1","2","3"]`,
-			input:       []string{"1", "2", "3"},
-		},
-		{
-			expectation: `[true,false]`,
-			input:       []bool{true, false},
-		},
-		{
-			expectation: `[1,2,3,4]`,
-			input:       []int{1, 2, 3, 4},
-		},
-	}
+	tc := NewTestcases(t).
+		Add("[]", []string(nil)).
+		Add("[]", []string{}).
+		Add(`["1"]`, []string{"1"}).
+		Add(`["1","2","3"]`, []string{"1", "2", "3"}).
+		Add(`[true,false]`, []bool{true, false}).
+		Add(`[1,2,3,4]`, []int{1, 2, 3, 4})
+
 	getActual := func(s any) string {
 		switch s.(type) {
 		case []string:
@@ -139,10 +70,9 @@ func TestMakeSliceStr(t *testing.T) {
 		}
 		return fmt.Sprint("unknown")
 	}
+	tc.Each(func(a *assert.Assertions, td TestData) {
+		actual := getActual(td.Input)
 
-	for _, tc := range tcs {
-		actual := getActual(tc.input)
-
-		assert.Equal(t, tc.expectation, actual)
-	}
+		a.Equal(td.Expectation, actual)
+	})
 }
