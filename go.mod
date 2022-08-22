@@ -1,4 +1,4 @@
-module tc-builder
+module github.com/nattakit-boonyang/go-testcase-builder
 
 go 1.19
 
