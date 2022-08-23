@@ -37,10 +37,10 @@ func MakeTreeNode(s string) *TreeNode {
 	if n == 0 {
 		return nil
 	}
-	return newNode(v[0], v[1:])
+	return newTreeNode(v[0], v[1:])
 }
 
-func newNode(num int, v []int) *TreeNode {
+func newTreeNode(num int, v []int) *TreeNode {
 	n := len(v)
 
 	var left, right []int
@@ -60,10 +60,10 @@ func newNode(num int, v []int) *TreeNode {
 
 	var leftNode, rightNode *TreeNode
 	if len(left) > 0 {
-		leftNode = newNode(left[0], left[1:])
+		leftNode = newTreeNode(left[0], left[1:])
 	}
 	if len(right) > 0 {
-		rightNode = newNode(right[0], right[1:])
+		rightNode = newTreeNode(right[0], right[1:])
 	}
 
 	if num == math.MinInt {
@@ -81,15 +81,15 @@ func newNode(num int, v []int) *TreeNode {
 }
 
 func MakeTreeNodeStr(node *TreeNode) string {
-	return strings.ReplaceAll(MakeSliceStr(walkNode(node)), "-9223372036854775808", "null")
+	return strings.ReplaceAll(MakeSliceStr(walkTreeNode(node)), "-9223372036854775808", "null")
 }
 
-func walkNode(node *TreeNode) []int {
+func walkTreeNode(node *TreeNode) []int {
 	if node == nil {
 		return make([]int, 0)
 	}
-	left := walkNode(node.Left)
-	right := walkNode(node.Right)
+	left := walkTreeNode(node.Left)
+	right := walkTreeNode(node.Right)
 	result := []int{node.Val}
 	if node.IsNil {
 		result = []int{math.MinInt}
