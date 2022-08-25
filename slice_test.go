@@ -10,7 +10,10 @@ import (
 func TestMakeIntSlice(t *testing.T) {
 	NewTestcases(t).
 		Add([]int{}, "").
+		Add([]int{}, " ").
 		Add([]int{}, "[]").
+		Add([]int{}, " [] ").
+		Add([]int{}, "[]\n").
 		Add([]int{1}, "[1]").
 		Add([]int{1, 2, 3}, "[1,2,3]").
 		Add([]int{1, 2, 3}, "[ 1 , 2 , 3 ]").
@@ -24,7 +27,10 @@ func TestMakeIntSlice(t *testing.T) {
 func TestMakeStringSlice(t *testing.T) {
 	NewTestcases(t).
 		Add([]string{}, "").
+		Add([]string{}, " ").
 		Add([]string{}, "[]").
+		Add([]string{}, " [] ").
+		Add([]string{}, "[]\n").
 		Add([]string{"1"}, `["1"]`).
 		Add([]string{"1", "2", "3"}, `["1","2","3"]`).
 		Add([]string{"1", "2", "3"}, `["1", "2", "3"]`).

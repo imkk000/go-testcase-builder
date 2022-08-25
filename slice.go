@@ -5,11 +5,12 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 func MakeIntSlice(s string) []int {
 	s = strings.TrimFunc(s, func(r rune) bool {
-		return r == '[' || r == ']'
+		return unicode.IsSpace(r) || r == '[' || r == ']'
 	})
 	if len(s) == 0 {
 		return []int{}
@@ -33,7 +34,7 @@ func MakeIntSlice(s string) []int {
 
 func MakeStringSlice(s string) []string {
 	s = strings.TrimFunc(s, func(r rune) bool {
-		return r == '[' || r == ']'
+		return unicode.IsSpace(r) || r == '[' || r == ']'
 	})
 	if len(s) == 0 {
 		return []string{}
