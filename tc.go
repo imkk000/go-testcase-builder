@@ -72,9 +72,8 @@ func (t *Testcase) GetAllTestData() []TestData {
 	return t.testData
 }
 
-func (t *Testcase) Each(runner func(assert *assert.Assertions, testData TestData)) {
+func (t *Testcase) Each(runner func(a *assert.Assertions, td TestData)) {
 	for _, td := range t.testData {
-		a := assert.New(t.t)
-		runner(a, td)
+		runner(assert.New(t.t), td)
 	}
 }
