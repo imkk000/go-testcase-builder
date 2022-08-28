@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewTestcases(t *testing.T) {
-	NewTestcases(t).
+	tc := NewTestcases(t).
 		Add("fizz", 3).
 		Add("buzz", 5).
 		Add("1", 1).
@@ -18,11 +18,27 @@ func TestNewTestcases(t *testing.T) {
 		}).
 		AddExpectation("fizz").
 		AddInput(6).
-		Each(func(assert *assert.Assertions, testData TestData) {
-			actual := FizzBuzz(testData.Input.(int))
-
-			assert.Equal(testData.Expectation, actual)
+		AddStruct(TestData{
+			Expectation: "2",
+			Input:       2,
+		}).
+		AddFunc(func() TestData {
+			return TestData{
+				Expectation: "4",
+				Input:       4,
+			}
+		}).
+		AddExpectation("7").
+		AddInputFunc(func() any {
+			return 7
 		})
+	tc.Each(func(assert *assert.Assertions, testData TestData) {
+		actual := FizzBuzz(testData.Input.(int))
+
+		assert.Equal(testData.Expectation, actual)
+	})
+
+	assert.Equal(t, tc.Len(), len(tc.GetAllTestData()))
 }
 
 func FizzBuzz(n int) string {
