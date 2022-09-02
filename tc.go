@@ -77,3 +77,7 @@ func (t *Testcase) Each(runner func(a *assert.Assertions, td TestData)) {
 		runner(assert.New(t.t), td)
 	}
 }
+
+func (t *Testcase) Reset(fn func()) {
+	fn()
+}

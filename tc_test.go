@@ -8,6 +8,8 @@ import (
 )
 
 func TestNewTestcases(t *testing.T) {
+	var globalVar int
+
 	tc := NewTestcases(t).
 		Add("fizz", 3).
 		Add("buzz", 5).
@@ -37,8 +39,12 @@ func TestNewTestcases(t *testing.T) {
 
 		assert.Equal(testData.Expectation, actual)
 	})
+	tc.Reset(func() {
+		globalVar = 1
+	})
 
 	assert.Equal(t, tc.Len(), len(tc.GetAllTestData()))
+	assert.Equal(t, 1, globalVar)
 }
 
 func FizzBuzz(n int) string {
