@@ -2,6 +2,7 @@ package queue
 
 type Queue[T any] struct {
 	q []T
+	s int
 }
 
 func NewQueue[T any]() *Queue[T] {
@@ -11,13 +12,19 @@ func NewQueue[T any]() *Queue[T] {
 }
 
 func NewQueueWith[T any](v []T) *Queue[T] {
+	if v == nil {
+		return NewQueue[T]()
+	}
+
 	return &Queue[T]{
 		q: v,
+		s: len(v),
 	}
 }
 
 func (q *Queue[T]) Enqueue(n T) {
 	q.q = append(q.q, n)
+	q.s++
 }
 
 func (q *Queue[T]) Dequeue() (v T) {
@@ -33,9 +40,10 @@ func (q *Queue[T]) Dequeue() (v T) {
 	copy(nq, q.q[1:])
 	q.q = nil
 	q.q = nq
+	q.s--
 	return
 }
 
 func (q *Queue[T]) Empty() bool {
-	return len(q.q) == 0
+	return q.s == 0
 }

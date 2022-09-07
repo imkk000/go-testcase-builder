@@ -6,6 +6,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewQueue(t *testing.T) {
+	q := NewQueueWith[string](nil)
+
+	assert.True(t, q.Empty())
+}
+
+func TestDequeue(t *testing.T) {
+	q := NewQueue[int]()
+	q.Enqueue(1)
+
+	assert.NotEmpty(t, q.Dequeue())
+	assert.Empty(t, q.Dequeue())
+}
+
 func TestQueueString(t *testing.T) {
 	expectation := []string{"h", "e", "l", "l", "o"}
 
