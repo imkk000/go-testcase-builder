@@ -1,6 +1,7 @@
 package tc
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -9,19 +10,19 @@ import (
 )
 
 type TreeNode struct {
-	IsNil bool
 	Val   int
 	Left  *TreeNode
 	Right *TreeNode
 }
 
+var TreeNodeNil *TreeNode
+
 func MakeTreeNode(s string) *TreeNode {
-	// parse input
 	s = strings.TrimFunc(s, func(r rune) bool {
 		return unicode.IsSpace(r) || r == '[' || r == ']'
 	})
 	if len(s) == 0 {
-		return &TreeNode{IsNil: true}
+		return nil
 	}
 
 	getInt := func(n string) *int {
@@ -37,11 +38,11 @@ func MakeTreeNode(s string) *TreeNode {
 		v[i] = getInt(e)
 	}
 	if len(v) == 0 {
-		return &TreeNode{IsNil: true}
+		return nil
 	}
 	if len(v) == 1 {
 		if v[0] == nil {
-			return &TreeNode{IsNil: true}
+			return nil
 		}
 		return &TreeNode{Val: *v[0]}
 	}
@@ -75,27 +76,113 @@ func MakeTreeNodeStr(root *TreeNode) string {
 	for !q.Empty() {
 		node := q.Dequeue()
 		if node == nil {
-			continue
-		}
-		if node.IsNil {
 			v = append(v, "null")
 			continue
 		}
-
 		v = append(v, strconv.Itoa(node.Val))
 		if node.Left != nil {
 			q.Enqueue(node.Left)
 		} else {
-			q.Enqueue(&TreeNode{IsNil: true})
+			q.Enqueue(nil)
 		}
 		if node.Right != nil {
 			q.Enqueue(node.Right)
 		} else {
-			q.Enqueue(&TreeNode{IsNil: true})
+			q.Enqueue(nil)
 		}
 	}
 
 	s := strings.Join(v, ",")
 	s = strings.TrimRight(s, ",null")
-	return "[" + s + "]"
+	return fmt.Sprintf("[%s]", s)
+}
+
+type Node struct {
+	Val      int
+	Children []*Node
+}
+
+var NodeNil *Node
+
+func MakeTreeMultipleNodeStr(root *Node) string {
+	q := queuepkg.NewQueue[*Node]()
+	q.Enqueue(root)
+
+	var v []string
+	i, l := 0, 1
+	for !q.Empty() {
+		node := q.Dequeue()
+		if node == nil {
+			v = append(v, "null")
+			continue
+		}
+		i++
+		v = append(v, strconv.Itoa(node.Val))
+		if i == l {
+			v = append(v, "null")
+			i, l = 0, len(node.Children)
+		}
+		if len(node.Children) == 0 {
+			q.Enqueue(nil)
+			continue
+		}
+		for _, child := range node.Children {
+			q.Enqueue(child)
+		}
+	}
+
+	s := strings.Join(v, ",")
+	s = strings.TrimRight(s, ",null")
+	return fmt.Sprintf("[%s]", s)
+}
+
+func MakeTreeMultipleNode(s string) *Node {
+	s = strings.TrimFunc(s, func(r rune) bool {
+		return unicode.IsSpace(r) || r == '[' || r == ']'
+	})
+	if len(s) == 0 {
+		return NodeNil
+	}
+
+	getInt := func(n string) *int {
+		v, err := strconv.Atoi(n)
+		if err != nil {
+			return nil
+		}
+		return &v
+	}
+	elms := strings.Split(s, ",")
+	v := make([]*int, len(elms))
+	for i, e := range elms {
+		v[i] = getInt(e)
+	}
+	if len(v) == 0 {
+		return NodeNil
+	}
+	if len(v) == 1 {
+		if v[0] == nil {
+			return NodeNil
+		}
+		return &Node{Val: *v[0]}
+	}
+
+	// new tree node
+	q := queuepkg.NewQueueWith(v[2:])
+	t := queuepkg.NewQueue[*Node]()
+	root := &Node{Val: *v[0]}
+	t.Enqueue(root)
+
+	for !q.Empty() {
+		node := t.Dequeue()
+		for {
+			num := q.Dequeue()
+			if num == nil {
+				break
+			}
+			child := &Node{Val: *num}
+			t.Enqueue(child)
+			node.Children = append(node.Children, child)
+		}
+	}
+	return root
 }

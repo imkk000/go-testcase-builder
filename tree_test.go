@@ -6,6 +6,124 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMakeTreeMultipleNodeStr(t *testing.T) {
+	newTest := func(expectation string) TestDataFunc {
+		return func() TestData {
+			return TestData{
+				Expectation: expectation,
+				Input:       MakeTreeMultipleNode(expectation),
+			}
+		}
+	}
+
+	NewTestcases(t).
+		AddFunc(newTest("[]")).
+		AddFunc(newTest("[1]")).
+		AddFunc(newTest("[1,null,2]")).
+		AddFunc(newTest("[1,null,2,3,null,null,4,5]")).
+		AddFunc(newTest("[1,null,2,3,4,null,null,null,5,null,6]")).
+		Each(func(a *assert.Assertions, td TestData) {
+			actual := MakeTreeMultipleNodeStr(td.Input.(*Node))
+
+			a.Equal(td.Expectation, actual)
+		})
+}
+
+func TestMakeTreeMultipleNode(t *testing.T) {
+	NewTestcases(t).
+		Add(NodeNil, "[]").
+		AddExpectation(&Node{
+			Val: 1,
+			Children: []*Node{
+				{Val: 2},
+				{
+					Val: 3,
+					Children: []*Node{
+						{Val: 4},
+						{Val: 5},
+					},
+				},
+			},
+		}).
+		AddInput("1,null,2,3,null,null,4,5").
+		AddExpectation(&Node{
+			Val: 1,
+			Children: []*Node{
+				{Val: 2},
+				{Val: 3},
+				{Val: 4},
+				{Val: 5},
+				{Val: 6},
+			},
+		}).
+		AddInput("[1,null,2,3,4,5,6]").
+		AddExpectation(&Node{
+			Val: 1,
+			Children: []*Node{
+				{
+					Val: 3,
+					Children: []*Node{
+						{Val: 5},
+						{Val: 6},
+					},
+				},
+				{Val: 2},
+				{Val: 4},
+			},
+		}).
+		AddInput("[1,null,3,2,4,null,5,6]").
+		AddExpectation(&Node{
+			Val: 1,
+			Children: []*Node{
+				{Val: 2},
+				{
+					Val: 3,
+					Children: []*Node{
+						{Val: 6},
+						{
+							Val: 7,
+							Children: []*Node{
+								{
+									Val: 11,
+									Children: []*Node{
+										{Val: 14},
+									},
+								},
+							},
+						},
+					},
+				},
+				{
+					Val: 4,
+					Children: []*Node{
+						{
+							Val: 8,
+							Children: []*Node{
+								{Val: 12},
+							},
+						},
+					}},
+				{
+					Val: 5,
+					Children: []*Node{
+						{
+							Val: 9,
+							Children: []*Node{
+								{Val: 13},
+							},
+						},
+						{Val: 10},
+					}},
+			},
+		}).
+		AddInput("[1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]").
+		Each(func(a *assert.Assertions, td TestData) {
+			actual := MakeTreeMultipleNode(td.Input.(string))
+
+			a.Equal(td.Expectation, actual)
+		})
+}
+
 func TestMakeTreeNodeStr(t *testing.T) {
 	newTest := func(expectation string) TestDataFunc {
 		return func() TestData {
@@ -62,11 +180,11 @@ func TestMakeTreeNode(t *testing.T) {
 			Right: &TreeNode{Val: 2},
 		}).
 		AddInput("[1,null,2]").
-		AddExpectation(&TreeNode{IsNil: true}).
+		AddExpectation(TreeNodeNil).
 		AddInput("[null]").
-		AddExpectation(&TreeNode{IsNil: true}).
+		AddExpectation(TreeNodeNil).
 		AddInput("[]").
-		AddExpectation(&TreeNode{IsNil: true}).
+		AddExpectation(TreeNodeNil).
 		AddInput("").
 		AddExpectation(&TreeNode{
 			Val: 10,
