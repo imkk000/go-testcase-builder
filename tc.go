@@ -12,14 +12,15 @@ type TestData struct {
 }
 
 type Testcase struct {
-	t        *testing.T
-	testData []TestData
+	T         *testing.T
+	TestData  []TestData
+	ResetFunc func()
 }
 
 func NewTestcases(t *testing.T) *Testcase {
 	return &Testcase{
-		t:        t,
-		testData: make([]TestData, 0),
+		T:        t,
+		TestData: make([]TestData, 0),
 	}
 }
 
@@ -31,14 +32,14 @@ func (t *Testcase) Add(expectation, input any) *Testcase {
 }
 
 func (t *Testcase) AddStruct(td TestData) *Testcase {
-	t.testData = append(t.testData, td)
+	t.TestData = append(t.TestData, td)
 	return t
 }
 
 type TestDataFunc func() TestData
 
 func (t *Testcase) AddFunc(testDataFunc TestDataFunc) *Testcase {
-	t.testData = append(t.testData, testDataFunc())
+	t.TestData = append(t.TestData, testDataFunc())
 	return t
 }
 
@@ -65,19 +66,20 @@ func (s *SplitSetTestcase) AddInputFunc(inputFunc InputFunc) *Testcase {
 }
 
 func (t *Testcase) Len() int {
-	return len(t.testData)
-}
-
-func (t *Testcase) GetAllTestData() []TestData {
-	return t.testData
+	return len(t.TestData)
 }
 
 func (t *Testcase) Each(runner func(a *assert.Assertions, td TestData)) {
-	for _, td := range t.testData {
-		runner(assert.New(t.t), td)
+	for _, td := range t.TestData {
+		runner(assert.New(t.T), td)
+
+		if t.ResetFunc != nil {
+			t.ResetFunc()
+		}
 	}
 }
 
-func (t *Testcase) Reset(fn func()) {
-	fn()
+func (t *Testcase) Reset(resetFunc func()) *Testcase {
+	t.ResetFunc = resetFunc
+	return t
 }

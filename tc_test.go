@@ -34,16 +34,16 @@ func TestNewTestcases(t *testing.T) {
 		AddInputFunc(func() any {
 			return 7
 		})
+	tc.Reset(func() {
+		globalVar = 1
+	})
 	tc.Each(func(assert *assert.Assertions, testData TestData) {
 		actual := FizzBuzz(testData.Input.(int))
 
 		assert.Equal(testData.Expectation, actual)
 	})
-	tc.Reset(func() {
-		globalVar = 1
-	})
 
-	assert.Equal(t, tc.Len(), len(tc.GetAllTestData()))
+	assert.Equal(t, tc.Len(), len(tc.TestData))
 	assert.Equal(t, 1, globalVar)
 }
 
