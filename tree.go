@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	queuepkg "github.com/nattakit-boonyang/go-testcase-builder/queue"
+	queuepkg "github.com/nattakit-boonyang/go-testcase-builder/ds/queue"
 )
 
 type TreeNode struct {
