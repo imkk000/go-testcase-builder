@@ -40,6 +40,7 @@ func TestMake2DMatrixInt(t *testing.T) {
 		Add([][]int{{99}, {100}}, "[[99][100]]").
 		AddExpectation([][]int{{1, 2, 3}, {2, 3, 4}}).
 		AddInput("[ [1,2,3] , [ 2, 3, 4 ]]").
+		Add([][]int{{-1, -2}, {1, 2}}, "[[-1,-2],[1,2]]").
 		Each(func(a *assert.Assertions, td TestData) {
 			actual := Make2DMatrixInt(td.Input.(string))
 

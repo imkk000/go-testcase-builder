@@ -63,13 +63,13 @@ func Make2DMatrixInt(s string) [][]int {
 	if len(s) == 0 {
 		return [][]int{}
 	}
-	re, err := regexp.Compile(`\[([\d,]*)\]`)
+	re, err := regexp.Compile(`\[([\d,-]*)\]`)
 	if err != nil {
 		return [][]int{}
 	}
 	elms := re.FindAllString(s, -1)
 	m := make([][]int, 0)
-	re, err = regexp.Compile(`\d+`)
+	re, err = regexp.Compile(`[-\d]+`)
 	if err != nil {
 		return [][]int{}
 	}
