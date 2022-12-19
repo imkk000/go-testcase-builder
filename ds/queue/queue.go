@@ -33,9 +33,5 @@ func (q *Queue[T]) Dequeue() (v T) {
 	if !ok {
 		return
 	}
-	v, ok = val.(T)
-	if !ok {
-		return
-	}
-	return v
+	return val.(T)
 }
